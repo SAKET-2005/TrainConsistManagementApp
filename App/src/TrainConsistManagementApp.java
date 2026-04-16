@@ -3,58 +3,63 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 14: Enforcing Capacity Rules using Custom Exception
+Use Case 15: Handling Unsafe Cargo using Custom Runtime Exception
 
 Description:
-This program demonstrates how to prevent invalid passenger bogies from being created by enforcing
-capacity rules using a custom exception. If a bogie is created with capacity less than or equal
-to zero, an exception is thrown.
+This program demonstrates safe handling of unsafe cargo assignments using a custom runtime exception.
+If incompatible cargo is assigned to a bogie (e.g., Petroleum to a Rectangular bogie), an exception
+is thrown and handled gracefully using try-catch-finally blocks.
 
-The system ensures that only valid bogies are added, maintaining data integrity and enforcing
-business constraints at the object creation level.
+The system ensures that the application does not crash and continues execution safely.
 
 Key Concepts:
-- Custom Exception for Domain-Specific Errors
-- Exception Inheritance
-- throw Keyword for Raising Exceptions
-- throws Declaration in Constructor
-- Fail-Fast Validation
-- Business Rule Enforcement
+- try-catch-finally for Structured Exception Handling
+- Runtime Exception for Unchecked Errors
+- Custom Runtime Exception
+- throw Keyword for Error Signaling
+- Graceful Failure Handling
+- finally Block for Cleanup/Logging
 
 @author SAKET-2005
-@version 14.0
+@version 15.0
 ================================================================================================================
 */
 
-import java.util.*;
-
-class InvalidCapacityException extends Exception
+class CargoSafetyException extends RuntimeException
 {
-    InvalidCapacityException(String message)
+    CargoSafetyException(String message)
     {
         super(message);
     }
 }
 
-class Bogie
+class GoodsBogie
 {
-    String name;
-    int capacity;
+    String shape;
+    String cargo;
 
-    Bogie(String name, int capacity) throws InvalidCapacityException
+    void assignCargo(String shape, String cargo)
     {
-        if (capacity <= 0)
+        try
         {
-            throw new InvalidCapacityException("Capacity must be greater than 0");
+            if (shape.equals("Rectangular") && cargo.equals("Petroleum"))
+            {
+                throw new CargoSafetyException("Unsafe: Petroleum cannot be assigned to Rectangular bogie");
+            }
+
+            this.shape = shape;
+            this.cargo = cargo;
+
+            System.out.println("Cargo assigned successfully");
         }
-
-        this.name = name;
-        this.capacity = capacity;
-    }
-
-    public String toString()
-    {
-        return name + " -> " + capacity;
+        catch (CargoSafetyException e)
+        {
+            System.out.println("Error: " + e.getMessage());
+        }
+        finally
+        {
+            System.out.println("Assignment process completed");
+        }
     }
 }
 
@@ -63,27 +68,14 @@ class TrainConsistManagementApp
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 14.0");
+        System.out.println("Version: 15.0");
         System.out.println();
 
-        List<Bogie> bogies = new ArrayList<>();
+        GoodsBogie b1 = new GoodsBogie();
 
-        try
-        {
-            bogies.add(new Bogie("Sleeper", 72));
-            bogies.add(new Bogie("AC Chair", -10)); // Invalid
-            bogies.add(new Bogie("First Class", 40));
-        }
-        catch (InvalidCapacityException e)
-        {
-            System.out.println("Error: " + e.getMessage());
-        }
+        b1.assignCargo("Rectangular", "Petroleum"); // Unsafe
+        b1.assignCargo("Cylindrical", "Petroleum"); // Safe
 
-        System.out.println("Valid Bogies in Train:");
-
-        for (Bogie b : bogies)
-        {
-            System.out.println(b);
-        }
+        System.out.println("Program continues safely...");
     }
 }
