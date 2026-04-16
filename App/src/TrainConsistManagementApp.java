@@ -3,41 +3,58 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 13: Performance Comparison using nanoTime()
+Use Case 14: Enforcing Capacity Rules using Custom Exception
 
 Description:
-This program demonstrates performance comparison between loop-based filtering and stream-based
-filtering using System.nanoTime() for precise time measurement.
+This program demonstrates how to prevent invalid passenger bogies from being created by enforcing
+capacity rules using a custom exception. If a bogie is created with capacity less than or equal
+to zero, an exception is thrown.
 
-A collection of bogies is processed using both traditional loop logic and Stream API. The execution
-time for each approach is measured and displayed.
-
-This use case highlights benchmarking techniques and encourages evidence-based optimization.
+The system ensures that only valid bogies are added, maintaining data integrity and enforcing
+business constraints at the object creation level.
 
 Key Concepts:
-- System.nanoTime() for High-Resolution Timing
-- Performance Benchmarking
-- Loop-Based Processing
-- Stream-Based Processing
-- Micro-Measurement Awareness
-- Evidence-Driven Optimization
+- Custom Exception for Domain-Specific Errors
+- Exception Inheritance
+- throw Keyword for Raising Exceptions
+- throws Declaration in Constructor
+- Fail-Fast Validation
+- Business Rule Enforcement
 
 @author SAKET-2005
-@version 13.0
+@version 14.0
 ================================================================================================================
 */
 
 import java.util.*;
+
+class InvalidCapacityException extends Exception
+{
+    InvalidCapacityException(String message)
+    {
+        super(message);
+    }
+}
 
 class Bogie
 {
     String name;
     int capacity;
 
-    Bogie(String name, int capacity)
+    Bogie(String name, int capacity) throws InvalidCapacityException
     {
+        if (capacity <= 0)
+        {
+            throw new InvalidCapacityException("Capacity must be greater than 0");
+        }
+
         this.name = name;
         this.capacity = capacity;
+    }
+
+    public String toString()
+    {
+        return name + " -> " + capacity;
     }
 }
 
@@ -46,44 +63,27 @@ class TrainConsistManagementApp
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 13.0");
+        System.out.println("Version: 14.0");
         System.out.println();
 
         List<Bogie> bogies = new ArrayList<>();
 
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 60));
-        bogies.add(new Bogie("First Class", 40));
-        bogies.add(new Bogie("Sleeper", 70));
-        bogies.add(new Bogie("AC Chair", 65));
-
-        // Loop-based filtering
-        long startLoop = System.nanoTime();
-
-        List<Bogie> loopResult = new ArrayList<>();
-        for (Bogie b : bogies)
+        try
         {
-            if (b.capacity > 60)
-            {
-                loopResult.add(b);
-            }
+            bogies.add(new Bogie("Sleeper", 72));
+            bogies.add(new Bogie("AC Chair", -10)); // Invalid
+            bogies.add(new Bogie("First Class", 40));
+        }
+        catch (InvalidCapacityException e)
+        {
+            System.out.println("Error: " + e.getMessage());
         }
 
-        long endLoop = System.nanoTime();
-        long loopTime = endLoop - startLoop;
+        System.out.println("Valid Bogies in Train:");
 
-        // Stream-based filtering
-        long startStream = System.nanoTime();
-
-        List<Bogie> streamResult = bogies
-                                        .stream()
-                                        .filter(b -> b.capacity > 60)
-                                        .toList();
-
-        long endStream = System.nanoTime();
-        long streamTime = endStream - startStream;
-
-        System.out.println("Loop Execution Time (ns): " + loopTime);
-        System.out.println("Stream Execution Time (ns): " + streamTime);
+        for (Bogie b : bogies)
+        {
+            System.out.println(b);
+        }
     }
 }
