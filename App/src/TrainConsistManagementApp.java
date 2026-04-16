@@ -3,42 +3,41 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 12: Safety Validation using Functional Interfaces and Streams
+Use Case 13: Performance Comparison using nanoTime()
 
 Description:
-This program demonstrates validation of goods bogies using functional programming concepts.
-Each bogie has a type and cargo. Safety rules are applied using Stream API and lambda expressions.
+This program demonstrates performance comparison between loop-based filtering and stream-based
+filtering using System.nanoTime() for precise time measurement.
 
-The system checks whether all bogies satisfy safety constraints using allMatch(). Specifically,
-if a bogie is cylindrical, it must carry only Petroleum. The result determines whether the train
-is safety compliant.
+A collection of bogies is processed using both traditional loop logic and Stream API. The execution
+time for each approach is measured and displayed.
 
-This use case highlights stream-based validation and business rule enforcement.
+This use case highlights benchmarking techniques and encourages evidence-based optimization.
 
 Key Concepts:
-- Streams API for Declarative Processing
-- allMatch() for Validation
-- Lambda Expressions for Rule Definition
-- Conditional Logic in Streams
-- Short-Circuit Evaluation
-- Business Rule Modeling
+- System.nanoTime() for High-Resolution Timing
+- Performance Benchmarking
+- Loop-Based Processing
+- Stream-Based Processing
+- Micro-Measurement Awareness
+- Evidence-Driven Optimization
 
 @author SAKET-2005
-@version 12.0
+@version 13.0
 ================================================================================================================
 */
 
 import java.util.*;
 
-class GoodsBogie
+class Bogie
 {
-    String type;
-    String cargo;
+    String name;
+    int capacity;
 
-    GoodsBogie(String type, String cargo)
+    Bogie(String name, int capacity)
     {
-        this.type = type;
-        this.cargo = cargo;
+        this.name = name;
+        this.capacity = capacity;
     }
 }
 
@@ -47,25 +46,44 @@ class TrainConsistManagementApp
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 12.0");
+        System.out.println("Version: 13.0");
         System.out.println();
 
-        List<GoodsBogie> bogies = new ArrayList<>();
+        List<Bogie> bogies = new ArrayList<>();
 
-        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        bogies.add(new GoodsBogie("Box", "Grain"));
-        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 60));
+        bogies.add(new Bogie("First Class", 40));
+        bogies.add(new Bogie("Sleeper", 70));
+        bogies.add(new Bogie("AC Chair", 65));
 
-        boolean isSafe = bogies
-                            .stream()
-                            .allMatch(b -> 
-                                !b.type.equals("Cylindrical") || 
-                                b.cargo.equals("Petroleum")
-                            );
+        // Loop-based filtering
+        long startLoop = System.nanoTime();
 
-        if (isSafe)
-            System.out.println("Train is SAFETY COMPLIANT");
-        else
-            System.out.println("Train is NOT SAFE");
+        List<Bogie> loopResult = new ArrayList<>();
+        for (Bogie b : bogies)
+        {
+            if (b.capacity > 60)
+            {
+                loopResult.add(b);
+            }
+        }
+
+        long endLoop = System.nanoTime();
+        long loopTime = endLoop - startLoop;
+
+        // Stream-based filtering
+        long startStream = System.nanoTime();
+
+        List<Bogie> streamResult = bogies
+                                        .stream()
+                                        .filter(b -> b.capacity > 60)
+                                        .toList();
+
+        long endStream = System.nanoTime();
+        long streamTime = endStream - startStream;
+
+        System.out.println("Loop Execution Time (ns): " + loopTime);
+        System.out.println("Stream Execution Time (ns): " + streamTime);
     }
 }
