@@ -3,33 +3,31 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 9: Grouping Bogies using Stream Collectors
+Use Case 10: Aggregating Total Capacity using Stream Reduction
 
 Description:
-This program demonstrates grouping of passenger bogies into categories using the Stream API
-and Collectors.groupingBy(). Bogies are represented as objects and stored in a List.
+This program demonstrates aggregation of seating capacities of bogies using Stream reduction.
+Bogies are represented as objects and stored in a List.
 
-The system converts the list into a stream, applies a grouping function to classify bogies,
-and collects the result into a Map where each key represents a category and the value is a list
-of bogies in that category.
+The system converts the list into a stream, extracts capacity values using map(), and then
+applies reduce() to compute the total seating capacity. The final aggregated value is displayed.
 
-This use case highlights structured data transformation from flat collections into grouped data.
+This use case highlights functional-style aggregation for computing numeric results efficiently.
 
 Key Concepts:
-- Collectors.groupingBy() for Classification
-- Stream Pipeline for Data Processing
-- Map Output Structure for Grouped Data
-- Lambda Expressions for Classification Logic
-- Data Aggregation
-- Structured Transformation
+- map() for Value Transformation
+- reduce() for Aggregation
+- Method Reference (Integer::sum)
+- Functional Aggregation
+- Stream Pipeline
+- Numeric Analytics
 
 @author SAKET-2005
-@version 9.0
+@version 10.0
 ================================================================================================================
 */
 
 import java.util.*;
-import java.util.stream.*;
 
 class Bogie
 {
@@ -41,11 +39,6 @@ class Bogie
         this.name = name;
         this.capacity = capacity;
     }
-
-    public String toString()
-    {
-        return name + " -> " + capacity;
-    }
 }
 
 class TrainConsistManagementApp
@@ -53,7 +46,7 @@ class TrainConsistManagementApp
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 9.0");
+        System.out.println("Version: 10.0");
         System.out.println();
 
         List<Bogie> bogies = new ArrayList<>();
@@ -61,17 +54,12 @@ class TrainConsistManagementApp
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 60));
         bogies.add(new Bogie("First Class", 40));
-        bogies.add(new Bogie("Sleeper", 70));
 
-        Map<String, List<Bogie>> groupedBogies = bogies
-                                                    .stream()
-                                                    .collect(Collectors.groupingBy(b -> b.name));
+        int totalCapacity = bogies
+                                .stream()
+                                .map(b -> b.capacity)
+                                .reduce(0, Integer::sum);
 
-        System.out.println("Grouped Bogies:");
-
-        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet())
-        {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
-        }
+        System.out.println("Total Seating Capacity: " + totalCapacity);
     }
 }
