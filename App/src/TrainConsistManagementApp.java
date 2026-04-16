@@ -3,63 +3,69 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 11: Validating Train ID and Cargo Code using Regular Expressions
+Use Case 12: Safety Validation using Functional Interfaces and Streams
 
 Description:
-This program demonstrates validation of Train ID and Cargo Code formats using Regular Expressions.
-The system checks whether the given inputs match predefined patterns to ensure correct formatting.
+This program demonstrates validation of goods bogies using functional programming concepts.
+Each bogie has a type and cargo. Safety rules are applied using Stream API and lambda expressions.
 
-The Train ID must follow a pattern like TRN-1234, and the Cargo Code must follow a pattern like PET-AB.
-The system compiles regex patterns, matches them against user input, and displays validation results.
+The system checks whether all bogies satisfy safety constraints using allMatch(). Specifically,
+if a bogie is cylindrical, it must carry only Petroleum. The result determines whether the train
+is safety compliant.
 
-This use case highlights input validation and format enforcement using regex.
+This use case highlights stream-based validation and business rule enforcement.
 
 Key Concepts:
-- Regular Expressions for Pattern Matching
-- Pattern Class for Compiled Regex
-- Matcher Class for Applying Patterns
-- matches() Method for Validation
-- Format Enforcement
-- Data Integrity Validation
+- Streams API for Declarative Processing
+- allMatch() for Validation
+- Lambda Expressions for Rule Definition
+- Conditional Logic in Streams
+- Short-Circuit Evaluation
+- Business Rule Modeling
 
 @author SAKET-2005
-@version 11.0
+@version 12.0
 ================================================================================================================
 */
 
 import java.util.*;
-import java.util.regex.*;
+
+class GoodsBogie
+{
+    String type;
+    String cargo;
+
+    GoodsBogie(String type, String cargo)
+    {
+        this.type = type;
+        this.cargo = cargo;
+    }
+}
 
 class TrainConsistManagementApp
 {
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 11.0");
+        System.out.println("Version: 12.0");
         System.out.println();
 
-        Scanner sc = new Scanner(System.in);
+        List<GoodsBogie> bogies = new ArrayList<>();
 
-        System.out.print("Enter Train ID: ");
-        String trainId = sc.nextLine();
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Box", "Grain"));
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
 
-        System.out.print("Enter Cargo Code: ");
-        String cargoCode = sc.nextLine();
+        boolean isSafe = bogies
+                            .stream()
+                            .allMatch(b -> 
+                                !b.type.equals("Cylindrical") || 
+                                b.cargo.equals("Petroleum")
+                            );
 
-        Pattern trainPattern = Pattern.compile("TRN-\\d{4}");
-        Pattern cargoPattern = Pattern.compile("PET-[A-Z]{2}");
-
-        Matcher trainMatcher = trainPattern.matcher(trainId);
-        Matcher cargoMatcher = cargoPattern.matcher(cargoCode);
-
-        if (trainMatcher.matches())
-            System.out.println("Train ID is VALID");
+        if (isSafe)
+            System.out.println("Train is SAFETY COMPLIANT");
         else
-            System.out.println("Train ID is INVALID");
-
-        if (cargoMatcher.matches())
-            System.out.println("Cargo Code is VALID");
-        else
-            System.out.println("Cargo Code is INVALID");
+            System.out.println("Train is NOT SAFE");
     }
 }
