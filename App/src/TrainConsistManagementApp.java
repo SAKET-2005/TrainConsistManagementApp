@@ -3,32 +3,33 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 8: Filtering Bogies using Stream API
+Use Case 9: Grouping Bogies using Stream Collectors
 
 Description:
-This program demonstrates filtering of passenger bogies based on seating capacity using the
-Stream API. Bogies are represented as objects and stored in a List.
+This program demonstrates grouping of passenger bogies into categories using the Stream API
+and Collectors.groupingBy(). Bogies are represented as objects and stored in a List.
 
-The system converts the list into a stream, applies a filter condition to select bogies with
-capacity greater than a specified value, and collects the result into a new list. The filtered
-bogies are then displayed.
+The system converts the list into a stream, applies a grouping function to classify bogies,
+and collects the result into a Map where each key represents a category and the value is a list
+of bogies in that category.
 
-This use case highlights the use of functional-style programming for cleaner and more readable code.
+This use case highlights structured data transformation from flat collections into grouped data.
 
 Key Concepts:
-- Stream API for Declarative Processing
-- stream() Method for Pipeline Creation
-- filter() Operation for Conditional Selection
-- Lambda Expressions for Concise Logic
-- collect() / toList() for Result Collection
-- Declarative Programming Style
+- Collectors.groupingBy() for Classification
+- Stream Pipeline for Data Processing
+- Map Output Structure for Grouped Data
+- Lambda Expressions for Classification Logic
+- Data Aggregation
+- Structured Transformation
 
 @author SAKET-2005
-@version 8.0
+@version 9.0
 ================================================================================================================
 */
 
 import java.util.*;
+import java.util.stream.*;
 
 class Bogie
 {
@@ -52,7 +53,7 @@ class TrainConsistManagementApp
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 8.0");
+        System.out.println("Version: 9.0");
         System.out.println();
 
         List<Bogie> bogies = new ArrayList<>();
@@ -60,17 +61,17 @@ class TrainConsistManagementApp
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 60));
         bogies.add(new Bogie("First Class", 40));
+        bogies.add(new Bogie("Sleeper", 70));
 
-        List<Bogie> filteredBogies = bogies
-                                        .stream()
-                                        .filter(b -> b.capacity > 60)
-                                        .toList();
+        Map<String, List<Bogie>> groupedBogies = bogies
+                                                    .stream()
+                                                    .collect(Collectors.groupingBy(b -> b.name));
 
-        System.out.println("Filtered Bogies (Capacity > 60):");
+        System.out.println("Grouped Bogies:");
 
-        for (Bogie b : filteredBogies)
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet())
         {
-            System.out.println(b);
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
         }
     }
 }
