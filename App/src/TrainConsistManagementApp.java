@@ -3,46 +3,87 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 1: Initialize Train Consist Management System
+Use Case 14: Enforcing Capacity Rules using Custom Exception
 
 Description:
-This program initializes the Train Consist Management Application and sets up the initial state
-of the train structure.
+This program demonstrates how to prevent invalid passenger bogies from being created by enforcing
+capacity rules using a custom exception. If a bogie is created with capacity less than or equal
+to zero, an exception is thrown.
 
-A dynamic List is used to represent the train consist, allowing coaches (bogies) to be added,
-removed, or modified in later use cases. At startup, the system begins with an empty consist
-and displays the initial state to the user.
-
-This use case establishes the foundation for all future operations such as insertion, deletion,
-reordering, and validation of train coaches.
+The system ensures that only valid bogies are added, maintaining data integrity and enforcing
+business constraints at the object creation level.
 
 Key Concepts:
-- Class Structure in Java
-- Main Method as Entry Point
-- Static Execution Flow
-- ArrayList for Dynamic Storage
-- List Interface Abstraction
-- Console Output for System State
-- Dynamic Initialization of Collections
+- Custom Exception for Domain-Specific Errors
+- Exception Inheritance
+- throw Keyword for Raising Exceptions
+- throws Declaration in Constructor
+- Fail-Fast Validation
+- Business Rule Enforcement
 
 @author SAKET-2005
-@version 1.0
+@version 14.0
 ================================================================================================================
 */
 
 import java.util.*;
+
+class InvalidCapacityException extends Exception
+{
+    InvalidCapacityException(String message)
+    {
+        super(message);
+    }
+}
+
+class Bogie
+{
+    String name;
+    int capacity;
+
+    Bogie(String name, int capacity) throws InvalidCapacityException
+    {
+        if (capacity <= 0)
+        {
+            throw new InvalidCapacityException("Capacity must be greater than 0");
+        }
+
+        this.name = name;
+        this.capacity = capacity;
+    }
+
+    public String toString()
+    {
+        return name + " -> " + capacity;
+    }
+}
 
 class TrainConsistManagementApp
 {
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 1.0");
+        System.out.println("Version: 14.0");
         System.out.println();
 
-        List<String> trainConsist = new ArrayList<>();
+        List<Bogie> bogies = new ArrayList<>();
 
-        System.out.println("Train Consist Initialized Successfully");
-        System.out.println("Initial Bogie Count: " + trainConsist.size());
+        try
+        {
+            bogies.add(new Bogie("Sleeper", 72));
+            bogies.add(new Bogie("AC Chair", -10)); // Invalid
+            bogies.add(new Bogie("First Class", 40));
+        }
+        catch (InvalidCapacityException e)
+        {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        System.out.println("Valid Bogies in Train:");
+
+        for (Bogie b : bogies)
+        {
+            System.out.println(b);
+        }
     }
 }
