@@ -3,46 +3,70 @@
 MAIN CLASS - TrainConsistManagementApp
 ================================================================================================================
 
-Use Case 1: Initialize Train Consist Management System
+Use Case 7: Sorting Bogies by Capacity using Comparator
 
 Description:
-This program initializes the Train Consist Management Application and sets up the initial state
-of the train structure.
+This program demonstrates sorting of passenger bogies based on their seating capacity using a
+custom Comparator. Bogies are represented as objects with attributes such as name and capacity.
 
-A dynamic List is used to represent the train consist, allowing coaches (bogies) to be added,
-removed, or modified in later use cases. At startup, the system begins with an empty consist
-and displays the initial state to the user.
+The system stores bogie objects in a List and applies a Comparator using lambda expressions to
+sort them based on capacity. The sorted list is then displayed.
 
-This use case establishes the foundation for all future operations such as insertion, deletion,
-reordering, and validation of train coaches.
+This use case highlights how custom sorting logic can be applied to real-world objects.
 
 Key Concepts:
-- Class Structure in Java
-- Main Method as Entry Point
-- Static Execution Flow
-- ArrayList for Dynamic Storage
-- List Interface Abstraction
-- Console Output for System State
-- Dynamic Initialization of Collections
+- Comparator Interface for Custom Sorting
+- Custom Objects for Data Modeling
+- List Collection for Dynamic Storage
+- sort() Method for Ordering
+- Lambda Expressions for Concise Logic
+- Separation of Data and Logic
 
 @author SAKET-2005
-@version 1.0
+@version 7.0
 ================================================================================================================
 */
 
 import java.util.*;
+
+class Bogie
+{
+    String name;
+    int capacity;
+
+    Bogie(String name, int capacity)
+    {
+        this.name = name;
+        this.capacity = capacity;
+    }
+
+    public String toString()
+    {
+        return name + " -> " + capacity;
+    }
+}
 
 class TrainConsistManagementApp
 {
     public static void main(String args[])
     {
         System.out.println("=== Train Consist Management App ===");
-        System.out.println("Version: 1.0");
+        System.out.println("Version: 7.0");
         System.out.println();
 
-        List<String> trainConsist = new ArrayList<>();
+        List<Bogie> bogies = new ArrayList<>();
 
-        System.out.println("Train Consist Initialized Successfully");
-        System.out.println("Initial Bogie Count: " + trainConsist.size());
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 60));
+        bogies.add(new Bogie("First Class", 40));
+
+        bogies.sort(Comparator.comparingInt(b -> b.capacity));
+
+        System.out.println("Sorted Bogies by Capacity:");
+
+        for (Bogie b : bogies)
+        {
+            System.out.println(b);
+        }
     }
 }
